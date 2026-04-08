@@ -3,7 +3,7 @@ spring:
     name: artifact.service
 
   datasource:
-    url: jdbs:postgresql://localhost:5432/artifact_db
+    url: jdbc:postgresql://localhost:5432/artifact_db
     username: aigerim
     password: password123
 
