@@ -1,15 +1,13 @@
 package kz.kbtu.project.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
+
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@PostMapping
-@PutMapping
-@GetMapping
+@RequestMapping("/api/v1/artifacts")
 public class ArtifactController {
-    
+
+
 
 }
