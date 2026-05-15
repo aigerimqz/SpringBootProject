@@ -1,4 +1,11 @@
 package kz.kbtu.notification.service.events;
 
-public class NotifyPreviousOwnerEvents {
+import java.util.List;
+
+public record NotifyPreviousOwnerEvents(
+        String artifactId,
+        String artifactName,
+        String newOwnerName,
+        List<String> previousOwnerEmails
+) {
 }

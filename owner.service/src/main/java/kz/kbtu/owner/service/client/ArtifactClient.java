@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
-@FeignClient(name = "artifact-service", url = "http://localhost:8081")
+@FeignClient(name = "artifact-service", url = "http://artifact-service:8081")
 public interface ArtifactClient {
     @GetMapping("/api/artifacts/{id}")
     ArtifactDTO getArtifact(@PathVariable UUID id);

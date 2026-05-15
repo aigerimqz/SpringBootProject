@@ -1,4 +1,8 @@
 package kz.kbtu.artifact.service.events;
 
-public class OwnerChangedEvent {
-}
+public record OwnerChangedEvent (
+    String artifactId,
+    String artifactName,
+    String newOwnerName,
+    String newOwnerEmail
+){}

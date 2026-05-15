@@ -2,6 +2,8 @@ package kz.kbtu.artifact.service.service;
 
 import kz.kbtu.artifact.service.domain.Artifact;
 import kz.kbtu.artifact.service.domain.Symptom;
+import kz.kbtu.artifact.service.events.OwnerChangedEvent;
+import kz.kbtu.artifact.service.producers.OwnerChangedProducer;
 import kz.kbtu.artifact.service.repository.ArtifactRepository;
 import kz.kbtu.artifact.service.repository.SymptomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,9 @@ public class ArtifactService {
     @Autowired
     private SymptomRepository symptomRepository;
 
+    @Autowired
+    private OwnerChangedProducer ownerChangedProducer;
+
     public Artifact create(Artifact artifact){
         return artifactRepository.save(artifact);
     }
@@ -35,7 +40,16 @@ public class ArtifactService {
         Artifact artifact = getById(id);
         artifact.setCurrentOwnerName(ownerName);
         artifact.setCurrentOwnerEmail(ownerEmail);
-        return artifactRepository.save(artifact);
+        artifactRepository.save(artifact);
+
+        OwnerChangedEvent event = new OwnerChangedEvent(
+                artifact.getId().toString(),
+                artifact.getName(),
+                ownerName,
+                ownerEmail
+        );
+        ownerChangedProducer.sendOwnerChanged(event);
+        return artifact;
     }
 
 

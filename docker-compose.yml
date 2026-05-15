@@ -2,6 +2,24 @@ version: '3.8'
 
 services:
 
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      CLUSTER_ID: Mk3OEYBSD34fcwNTJENDLw
+    networks:
+      - cursed-net
+
   artifact-db:
     image: postgres:15
     container_name: db-artifact
@@ -35,8 +53,10 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://artifact-db:5432/db_artifact
       SPRING_DATASOURCE_USERNAME: aigerim
       SPRING_DATASOURCE_PASSWORD: password123
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
     depends_on:
       - artifact-db
+      - kafka
     networks:
       - cursed-net
 
@@ -49,10 +69,24 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://owner-db:5432/db_owner
       SPRING_DATASOURCE_USERNAME: aigerim
       SPRING_DATASOURCE_PASSWORD: password123
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       FEIGN_CLIENT_ARTIFACT_SERVICE_URL: http://artifact-service:8081
     depends_on:
       - owner-db
       - artifact-service
+      - kafka
+    networks:
+      - cursed-net
+
+  notification-service:
+    build: ./notification.service
+    container_name: notification-service
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    depends_on:
+      - kafka
     networks:
       - cursed-net
 

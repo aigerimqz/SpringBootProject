@@ -17,5 +17,13 @@ spring:
     baseline-on-migrate: true
 
 
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: cursed-group
+      auto-offset-reset: earliest
+
+
+
 server:
   port: 8081
