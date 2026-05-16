@@ -21,6 +21,9 @@ spring:
       group-id: cursed-group
       auto-offset-reset: earliest
 
+jwt:
+  secret: MyVerySecretKeyForJWTSigningThatIsLongEnough32chars!
+
 server:
   port: 8082
 

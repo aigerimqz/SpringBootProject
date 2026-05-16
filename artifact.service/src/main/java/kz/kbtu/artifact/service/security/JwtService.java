@@ -13,7 +13,7 @@ import java.util.List;
 
 @Service
 public class JwtService {
-    @Value("${jwt.service}")
+    @Value("${jwt.secret}")
     private String secret;
 
     public boolean isTokenValid(String token){

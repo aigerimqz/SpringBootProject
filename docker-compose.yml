@@ -20,6 +20,18 @@ services:
     networks:
       - cursed-net
 
+  auth-db:
+    image: postgres:15
+    container_name: db-auth
+    environment:
+      POSTGRES_DB: db_auth
+      POSTGRES_USER: aigerim
+      POSTGRES_PASSWORD: password123
+    ports:
+      - "5434:5432"
+    networks:
+      - cursed-net
+
   artifact-db:
     image: postgres:15
     container_name: db-artifact
@@ -44,6 +56,23 @@ services:
     networks:
       - cursed-net
 
+  auth-service:
+    build: ./auth.service
+    container_name: auth-service
+    ports:
+      - "8084:8084"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://auth-db:5432/db_auth
+      SPRING_DATASOURCE_USERNAME: aigerim
+      SPRING_DATASOURCE_PASSWORD: password123
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      JWT_SECRET: MyVerySecretKeyForJWTSigningThatIsLongEnough32chars!
+    depends_on:
+      - auth-db
+      - kafka
+    networks:
+      - cursed-net
+
   artifact-service:
     build: ./artifact.service
     container_name: artifact-service
@@ -54,6 +83,7 @@ services:
       SPRING_DATASOURCE_USERNAME: aigerim
       SPRING_DATASOURCE_PASSWORD: password123
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      JWT_SECRET: MyVerySecretKeyForJWTSigningThatIsLongEnough32chars!
     depends_on:
       - artifact-db
       - kafka
@@ -71,6 +101,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: password123
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       FEIGN_CLIENT_ARTIFACT_SERVICE_URL: http://artifact-service:8081
+      JWT_SECRET: MyVerySecretKeyForJWTSigningThatIsLongEnough32chars!
     depends_on:
       - owner-db
       - artifact-service

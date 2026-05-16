@@ -25,4 +25,5 @@ public class Symptom {
     private LocalDateTime loggedAt;
 
 
+
 }

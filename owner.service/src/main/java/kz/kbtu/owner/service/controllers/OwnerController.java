@@ -6,6 +6,7 @@ import kz.kbtu.owner.service.domain.Ownership;
 import kz.kbtu.owner.service.repository.OwnerRepository;
 import kz.kbtu.owner.service.service.OwnerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class OwnerController {
     private OwnerRepository ownerRepository;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public Owner createOwner(@RequestBody Owner owner){
         return ownerRepository.save(owner);
     }
@@ -31,6 +33,7 @@ public class OwnerController {
     }
 
     @PostMapping("/assign")
+    @PreAuthorize("hasRole('ADMIN')")
     public Ownership assignOwner(@RequestParam UUID artifactId, @RequestParam UUID ownerId){
         return ownerService.assignOwner(artifactId, ownerId);
     }

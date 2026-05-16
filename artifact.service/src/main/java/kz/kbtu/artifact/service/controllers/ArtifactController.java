@@ -5,6 +5,7 @@ import kz.kbtu.artifact.service.domain.Artifact;
 import kz.kbtu.artifact.service.domain.Symptom;
 import kz.kbtu.artifact.service.service.ArtifactService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,6 +19,7 @@ public class ArtifactController {
     private ArtifactService artifactService;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public Artifact create(@RequestBody Artifact artifact){
         return artifactService.create(artifact);
     }
@@ -33,10 +35,12 @@ public class ArtifactController {
     }
 
     @PostMapping("/{id}/assign-owner")
+    @PreAuthorize("hasRole('ADMIN')")
     public Artifact assignOwner(@PathVariable UUID id, @RequestParam String ownerName, @RequestParam String ownerEmail){
         return artifactService.assignOwner(id, ownerName, ownerEmail);
     }
     @PostMapping("/{id}/symptoms")
+    @PreAuthorize("hasRole('ADMIN')")
     public Symptom addSymptom(@PathVariable UUID id, @RequestBody Symptom symptom){
         return artifactService.addSymptom(id, symptom);
     }
