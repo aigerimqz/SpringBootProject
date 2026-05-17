@@ -27,7 +27,6 @@ public class Symptom {
     private Artifact artifact;
 
     private String description;
-    private String severity;
     private LocalDateTime loggedAt;
 
 
