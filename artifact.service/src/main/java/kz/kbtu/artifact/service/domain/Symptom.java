@@ -1,6 +1,7 @@
 package kz.kbtu.artifact.service.domain;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,6 +25,7 @@ public class Symptom {
 
     @ManyToOne(fetch =  FetchType.LAZY)
     @JoinColumn(name = "artifact_id")
+    @JsonBackReference
     private Artifact artifact;
 
     private String description;

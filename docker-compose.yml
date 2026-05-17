@@ -29,6 +29,11 @@ services:
       POSTGRES_PASSWORD: password123
     ports:
       - "5434:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aigerim -d db_auth"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
     networks:
       - cursed-net
 
@@ -41,6 +46,11 @@ services:
       POSTGRES_PASSWORD: password123
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aigerim -d db_artifact"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
     networks:
       - cursed-net
 
@@ -53,6 +63,28 @@ services:
       POSTGRES_PASSWORD: password123
     ports:
       - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aigerim -d db_owner"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - cursed-net
+
+  notification-db:
+    image: postgres:15
+    container_name: db-notification
+    environment:
+      POSTGRES_DB: db_notification
+      POSTGRES_USER: aigerim
+      POSTGRES_PASSWORD: password123
+    ports:
+      - "5435:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aigerim -d db_notification"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
     networks:
       - cursed-net
 
@@ -68,8 +100,10 @@ services:
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       JWT_SECRET: MyVerySecretKeyForJWTSigningThatIsLongEnough32chars!
     depends_on:
-      - auth-db
-      - kafka
+      auth-db:
+        condition: service_healthy
+      kafka:
+        condition: service_started
     networks:
       - cursed-net
 
@@ -85,8 +119,10 @@ services:
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       JWT_SECRET: MyVerySecretKeyForJWTSigningThatIsLongEnough32chars!
     depends_on:
-      - artifact-db
-      - kafka
+      artifact-db:
+        condition: service_healthy
+      kafka:
+        condition: service_started
     networks:
       - cursed-net
 
@@ -103,9 +139,12 @@ services:
       FEIGN_CLIENT_ARTIFACT_SERVICE_URL: http://artifact-service:8081
       JWT_SECRET: MyVerySecretKeyForJWTSigningThatIsLongEnough32chars!
     depends_on:
-      - owner-db
-      - artifact-service
-      - kafka
+      owner-db:
+        condition: service_healthy
+      artifact-service:
+        condition: service_started
+      kafka:
+        condition: service_started
     networks:
       - cursed-net
 
@@ -115,9 +154,15 @@ services:
     ports:
       - "8083:8083"
     environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://notification-db:5432/db_notification
+      SPRING_DATASOURCE_USERNAME: aigerim
+      SPRING_DATASOURCE_PASSWORD: password123
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
     depends_on:
-      - kafka
+      notification-db:
+        condition: service_healthy
+      kafka:
+        condition: service_started
     networks:
       - cursed-net
 
