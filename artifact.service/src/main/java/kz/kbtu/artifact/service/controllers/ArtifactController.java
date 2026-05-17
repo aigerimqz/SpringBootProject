@@ -45,6 +45,27 @@ public class ArtifactController {
         return artifactService.getById(id);
     }
 
+    @Operation(summary = "Update artifact")
+    @ApiResponse(responseCode = "200", description = "Artifact updated")
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public Artifact update(@PathVariable UUID id, @RequestBody Artifact updated) {
+        Artifact existing = artifactService.getById(id);
+        existing.setName(updated.getName());
+        existing.setOrigin(updated.getOrigin());
+        existing.setCurseType(updated.getCurseType());
+        existing.setDangerType(updated.getDangerType());
+        return artifactService.create(existing);
+    }
+
+    @Operation(summary = "Delete artifact")
+    @ApiResponse(responseCode = "204", description = "Artifact deleted")
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public void delete(@PathVariable UUID id) {
+        artifactService.delete(id);
+    }
+
 
 
     @Operation(summary = "Assign new owner — triggers Kafka notification chain")
@@ -71,6 +92,8 @@ public class ArtifactController {
     public List<Symptom> getSymptoms(@PathVariable UUID id){
         return artifactService.getSymptoms(id);
     }
+
+
 
 
 }

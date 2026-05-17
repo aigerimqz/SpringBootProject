@@ -36,6 +36,9 @@ public class ArtifactService {
     public Artifact getById(UUID id){
         return artifactRepository.findById(id).orElseThrow(() -> new RuntimeException("Not found: " + id));
     }
+    public void delete(UUID id) {
+        artifactRepository.deleteById(id);
+    }
 
     public Artifact assignOwner(UUID id, String ownerName, String ownerEmail){
         Artifact artifact = getById(id);
