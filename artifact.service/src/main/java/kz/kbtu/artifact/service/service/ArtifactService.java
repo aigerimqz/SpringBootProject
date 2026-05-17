@@ -9,6 +9,7 @@ import kz.kbtu.artifact.service.repository.SymptomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -54,8 +55,8 @@ public class ArtifactService {
 
 
     public Symptom addSymptom(UUID artifactId, Symptom symptom) {
-        getById(artifactId);
-        symptom.setArtifactId(artifactId);
+        Artifact artifact = getById(artifactId);
+        symptom.setArtifact(artifact);
         return symptomRepository.save(symptom);
     }
     public List<Symptom> getSymptoms(UUID artifactId){

@@ -21,8 +21,20 @@ public class Symptom {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    private UUID artifactId;
+
+    @ManyToOne(fetch =  FetchType.LAZY)
+    @JoinColumn(name = "artifact_id")
+    private Artifact artifact;
+
+    private String description;
+    private String severity;
     private LocalDateTime loggedAt;
+
+
+    @PrePersist
+    public void prePersist() {
+        this.loggedAt = LocalDateTime.now();
+    }
 
 
 

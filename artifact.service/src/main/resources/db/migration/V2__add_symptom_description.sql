@@ -1,0 +1,1 @@
+ALTER TABLE curse_symptom ADD COLUMN IF NOT EXISTS description VARCHAR(500);

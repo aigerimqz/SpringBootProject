@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -26,6 +27,9 @@ public class Artifact {
     private String dangerType;
     private String currentOwnerName;
     private String currentOwnerEmail;
+
+    @OneToMany(mappedBy = "artifact", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Symptom> symptoms;
 
 
 }
